@@ -47,7 +47,6 @@ h1 {
 
 p {
     font-size: 1.2em;
-    overflow-wrap: break-word;
     text-align: justify;
     color: black;/* rgba(255, 255, 255, 0.7); */
     margin-top: 10px;
@@ -81,6 +80,9 @@ h3 {
 ul {
   display: inline-block;
   text-align: left; /* mantém os itens alinhados à esquerda dentro da lista */
+  margin-left: 70px;
+  margin-right: 70px;
+  text-align: justify;
 }
 
 
