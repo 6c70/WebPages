@@ -49,6 +49,7 @@ p {
     font-size: 1.2em;
     overflow-wrap: break-word;
     text-align: justify;
+    word-wrap: break-word;
     color: black;/* rgba(255, 255, 255, 0.7); */
     margin-top: 10px;
     margin-left: 40px;
