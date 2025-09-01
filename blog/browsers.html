@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - 6c70</title>
+    <!-- Referenciando o arquivo externo de CSS (está um nível acima, então usa-se ../) -->
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <button onclick="toggleConteudo()">Mostrar/Esconder conteúdo</button>
+
+    <header>
+        <h1>Credenciais em Browsers</h1>
+        <h3>É seguro ou não guardar credencial em browser?</h3>
+    </header>
+
+    
+
+    <section class="post">   
+
+
+        <div class="post-card">                
+            <br>
+            <h2>O que são browsers?</h2>
+            <br>
+            <p>Browsers, popularmente conhecidos como navegadores de internet, são ferramentas essenciais para acessar a Web. Essa aplicação tem duas funções centrais: localizar conteúdos disponíveis na rede e exibir essas informações de forma acessível ao usuário. Com o crescimento da internet e a constante evolução das tecnologias digitais, os browsers deixaram de ser apenas "leitores de páginas" e passaram a incorporar diversas funcionalidades adicionais, como gerenciamento de senhas, sincronização entre dispositivos e suporte a extensões, tudo com o objetivo de tornar a navegação mais prática, fluida e personalizada.</p>
+            <p>Além de suas funções principais — localizar e exibir conteúdos da web —, eles incorporaram diversas funcionalidades adicionais, pensadas para otimizar a experiência do usuário. Entre essas inovações, destaca-se o cofre de senhas, um recurso que armazena e gerencia credenciais de acesso a diversas páginas web, eliminando a necessidade de memorizar diversas senhas e promovendo uma navegação mais simplificada e transparente.</p>
+            <br><br> <br><br>
+            <h2>Como os browsers armazenam credenciais?</h2>
+            <br>
+            <p>Os navegadores modernos funcionam como clientes em uma arquitetura cliente-servidor. Nesse modelo, diversos tipos de dados gerados durante a navegação — como histórico de páginas acessadas, cookies, favoritos e credenciais de login — são armazenados localmente no dispositivo do usuário. Para isso, muitos navegadores utilizam bancos de dados leves e eficientes, sendo o <strong>SQLite</strong> uma das tecnologias mais comuns para essa finalidade.</p>
+
+            <p>O<strong> </i>Microsoft EDGE </i></strong> é o browser padrão do sistema operacional windows desde 2015, não obstante, em 2020 ele foi reconstruído com base no projeto Chromium que é de código aberto. Nele as credenciais de login salvas pelo usuário são armazenadas em um banco de dados SQLite localizado no sistema de arquivos do dispositivo. Esse banco contém informações como nomes de usuário, senhas, URLs associadas e datas de criação.</p>
+
+            <p>Entretanto, para garantir a <strong>segurança</strong> e a <strong>privacidade</strong> do usuário, as senhas não são armazenadas em texto simples (plain text). O navegador utiliza mecanismos de criptografia fornecidos pelo sistema operacional para proteger esses dados. Por exemplo:</p>
+
+            <ul>
+            <li>No <strong>Windows</strong>, é usada a API do <strong>Windows Data Protection API (DPAPI)</strong> para criptografar e descriptografar as senhas.</li>
+            <li text-align: left;>No <strong>macOS</strong>, o navegador utiliza o <strong>Keychain</strong>, o sistema nativo de gerenciamento de senhas da Apple.</li>
+            <li>No <strong>Linux</strong>, o Chrome pode utilizar soluções como o <strong>GNOME Keyring</strong> ou o <strong>KWallet</strong>, dependendo do ambiente de desktop.</li>
+            </ul>
+
+            <p>Além disso, os navegadores oferecem mecanismos de sincronização, permitindo que as credenciais sejam compartilhadas com segurança entre diferentes dispositivos conectados à mesma conta (como a Conta Google, no caso do Chrome). Essa sincronização é criptografada de ponta a ponta, garantindo que apenas o usuário consiga acessar suas informações.</p>
+
+            <p> Dito isso, vamos fazer uma análise prática dessa <i>feature</i> que "facilita" e automatiza o processo de login a fim de verificar a segurança (ou falta) dessa prática. Essa análise está sendo realizado no windows 11 e EDGE como browser, contudo, essa sistemática é aplicada a grande parte dos navegadores.</p>
+
+            <p> Ao digitar as credenciais de acesso a um site, o browser vai perguntar se deseja salvá-las:</p>
+            <br>
+            <img src="../assets/fig001.png">       
+
+            <br>
+            <p>Caso o usuário escolha salvar, esses dados serão gravados em uma base de dados SQLite denominada "Login Data" localizada na pasta "%USERPROFILE%\AppData\Local\Microsoft\Edge\User Data\Default" do usuário corrente. No entando, confome dito acima, a senha é guardada como um blob criptografado por uma chave simétrica forte (ex: sha256). Na imagem abaixo conseguimos ver a base de dados que pode ser aberta por um gerenciador de SQLite. </p>
+            <br>
+            <img src="../assets/logindata201610.png">
+            <br>
+            <p>No entanto, chave-mestre utilizada para cifrar a senha é obtida com base dos dados do usuário logado. Essa chave é criptografada por meio da DPAPI, que é uma API interna do windows que permite desenvolvedores e softwares a criptografar e descriptografar dados sem a necessidade de gerenciar complexas chaves critográficas, isto é, é abstraído o processo de escolha da chave por meio de uma derivação de dados do usuário ou do computador.</p>
+            <p>Disto isso, a chave-mestre criptografada pode ser encontrada em "%USERPROFILE%\AppData\Local\Microsoft\Edge\User Data" no arquivo denominado "Local State" criptografada pela DPAPI do windows, conforme imagem abaixo: </p>
+            <br>
+            <img src="../assets/encrypted_121221.png">
+            
+            <br>
+            <p>Assim, com base na chave-mestra cifrada pela DPAPI é possível fazer o processo inverso e obter a senha em claro. Isto é, utilizando a funçao CryptUnprotectData da DPAPI e informando a "encrypted_key" localizada no aquivo "Local State" é possivel obter a chave-mestra, em texto plano. Logo, com a posse da mesma é possivel decriptar o conteúdo da base SQLite indepentende da força do algoritmo usado. Portanto, mesmo que as primitivas criptografícas sejam fortes, com a posse ja chave-mestra é possível decriptar o contéudo cifrado com a chave simétrica e obter a credencial salva no navegador. </p>
+            <br>
+            <img src="../assets/sqlite-122316.png">
+            <br>
+            <br>
+            <img src="../assets/plain-123149.png">
+            <br>            
+            <P>Assim podemos resumir que a pesar de  utilizar algoritmos de criptografia robustos temos uma um problema com a chave-mestra não ser definida e guardada pela usuário, mas sim baseada em dados do dispositivo/usuário que ficam armazenados localmente. Assim, infoestealers se utilziam dessa fragilidade (obscuridade) para furtar dados relacionados a credenciais salva em browsers.</P>        
+            <br>
+            <br>
+            <h2> Como guardar de maneira segura?</h2>
+            <br>
+            <p>Como visto acima o modelo default (deixando o browser abstrair o processo de definir a chave-mestre) que salva a credencial em browser tem uma fragilidade que pode comprometer as senhas salvas. Contudo, alguns browsers permitem que o usuário defina a chave-mestre, assim, a segurança de suas senhas salvas dependeriam da definição de uma chave-mestre forte. Nesse sentido, é indicado usar chaves grandes uma vez que a força de uma credencial está relacionada a combinação de caracteres possíveis, isto é, uma senha numérica de 4 caracteres têm 10x10x10x10 = 10000 possibilidades. Destarte, ao adicionar letras maiúsculas,  minúsculas, caracteres especiais e números as possibilidades possíveis aumentam e a quantidade de combinações crescem exponencialmente.</p>  
+            <p>Uma alternativa mais robusta é utilizar cofres de senhas dedicados, como KeePassXC, Bitwarden, 1Password ou Dashlane. Esses serviços e softwares utilizam criptografia de ponta para armazenar suas senhas de forma segura </p>
+            <ul>
+            <li>KeePassXC: Software de código aberto, que armazena suas senhas localmente e permite gerenciar as credenciais de forma segura.</li>
+            <li>Bitwarden: Oferece opções gratuitas e pagas, com armazenamento na nuvem, e é altamente recomendado pela sua simplicidade e segurança.</li>
+            <li>1Password: Uma opção mais voltada para quem procura recursos avançados, como compartilhamento de senhas e auditorias de segurança.</li>
+            </ul>
+            <p>Além disso, essas soluções mais específicas provem mais flexibilidade para definir o algoritmo criptográfico utilizado, para gerenciar a integração com browser, etc. Não obstante, algumas tem proteções extras tal como impedir que screen loggers capturem as credenciais por meio de snapshot da tela.</p>
+            <p>A autenticação multifatorial é uma das formas mais eficazes de aumentar a segurança. Ao ativar a MFA em suas contas, você adiciona uma camada extra de proteção além da senha. Mesmo que sua senha seja comprometida, o acesso à conta requer um segundo fator, como um código enviado por push TOTP ou gerado por um aplicativo de autenticação (Google Authenticator, Authy, etc.)</p>
+            <br>
+            <br>  
+
+        </div> 
+         
+    </section>
+
+ 
+    <section class="links">
+        <a href="../index.html">Voltar para o portfólio</a>
+    </section>
+
+    <footer>
+       <!--- <p>6c70 - "A difusão da informação é capaz de tranformar dado em conhecimento prático".</p> -->
+    </footer>
+
+    <script src="../teste/script.js"></script>
+
+</body>
+ 
+</html>
