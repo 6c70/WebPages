@@ -38,7 +38,7 @@
 
             <p>Além disso, os navegadores oferecem mecanismos de sincronização, permitindo que as credenciais sejam compartilhadas com segurança entre diferentes dispositivos conectados à mesma conta (como a Conta Google, no caso do Chrome). Essa sincronização é criptografada de ponta a ponta, garantindo que apenas o usuário consiga acessar suas informações.</p>
 
-            <p> Dito isso, vamos fazer uma análise prática dessa <i>feature</i> que "facilita" e automatiza o processo de login a fim de verificar a segurança (ou falta) dessa prática. Essa análise está sendo realizado no windows 11 e EDGE como browser, contudo, essa sistemática é aplicada a grande parte dos navegadores.</p>
+            <p> Dito isso, vamos fazer uma análise prática dessa <i>feature</i> que "facilita" e automatiza o processo de login a fim de verificar a segurança (ou falta) dessa prática. Essa análise está sendo realizado no sistema operacional windows 11 e EDGE como browser, contudo, essa sistemática é aplicada a grande parte dos navegadores.</p>
 
             <p> Ao digitar as credenciais de acesso a um site, o browser vai perguntar se deseja salvá-las:</p>
             <br>
@@ -49,8 +49,8 @@
             <br>
             <img src="../assets/logindata201610.png">
             <br>
-            <p>No entanto, chave-mestre utilizada para cifrar a senha é obtida com base dos dados do usuário logado. Essa chave é criptografada por meio da DPAPI, que é uma API interna do windows que permite desenvolvedores e softwares a criptografar e descriptografar dados sem a necessidade de gerenciar complexas chaves critográficas, isto é, é abstraído o processo de escolha da chave por meio de uma derivação de dados do usuário ou do computador.</p>
-            <p>Disto isso, a chave-mestre criptografada pode ser encontrada em "%USERPROFILE%\AppData\Local\Microsoft\Edge\User Data" no arquivo denominado "Local State" criptografada pela DPAPI do windows, conforme imagem abaixo: </p>
+            <p>No entanto, a chave-mestre utilizada para cifrar a senha é obtida com base dos dados do usuário logado. Essa chave é criptografada por meio da DPAPI, que é uma API interna do windows que permite desenvolvedores e softwares a criptografar e descriptografar dados sem a necessidade de gerenciar complexas chaves critográficas, isto é, é abstraído o processo de escolha da chave por meio de uma derivação de dados do usuário ou do computador.</p>
+            <p>Dito isso, a chave-mestre criptografada pode ser encontrada em "%USERPROFILE%\AppData\Local\Microsoft\Edge\User Data" no arquivo denominado "Local State" criptografada pela DPAPI do windows, conforme imagem abaixo: </p>
             <br>
             <img src="../assets/encrypted_121221.png">
             
@@ -67,7 +67,7 @@
             <br>
             <h2> Como guardar de maneira segura?</h2>
             <br>
-            <p>Como visto acima o modelo default (deixando o browser abstrair o processo de definir a chave-mestre) que salva a credencial em browser tem uma fragilidade que pode comprometer as senhas salvas. Contudo, alguns browsers permitem que o usuário defina a chave-mestre, assim, a segurança de suas senhas salvas dependeriam da definição de uma chave-mestre forte. Nesse sentido, é indicado usar chaves grandes uma vez que a força de uma credencial está relacionada a combinação de caracteres possíveis, isto é, uma senha numérica de 4 caracteres têm 10x10x10x10 = 10000 possibilidades. Destarte, ao adicionar letras maiúsculas,  minúsculas, caracteres especiais e números as possibilidades possíveis aumentam e a quantidade de combinações crescem exponencialmente.</p>  
+            <p>Como visto acima, o modelo default (deixando o browser abstrair o processo de definir a chave-mestre) que salva a credencial em browser tem uma fragilidade a qual pode comprometer as senhas salvas. Contudo, alguns browsers permitem que o usuário defina a chave-mestre manualmente, assim, a segurança de suas senhas salvas dependeriam da definição de uma chave-mestre forte. Nesse sentido, é indicado usar chaves grandes uma vez que a força de uma credencial está relacionada a combinação de caracteres possíveis, isto é, uma senha numérica de 4 caracteres têm 10x10x10x10 = 10000 possibilidades. Destarte, ao adicionar letras maiúsculas,  minúsculas, caracteres especiais e números as possibilidades possíveis aumentam e a quantidade de combinações crescem exponencialmente.</p>  
             <p>Uma alternativa mais robusta é utilizar cofres de senhas dedicados, como KeePassXC, Bitwarden, 1Password ou outro de sua preferência. </p>
             <ul>
             <li>KeePassXC: Software de código aberto, que armazena suas senhas localmente e permite gerenciar as credenciais de forma segura.</li>
@@ -97,6 +97,7 @@
 </body>
  
 </html>
+
 
 
 
